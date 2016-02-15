@@ -1,0 +1,9 @@
+使用方法:
+GetContent content = new GetContent("https://item.taobao.com/item.htm?spm=a230r.1.14.52.emq8qE&id=525723190588&ns=1&abbucket=4#detail");
+商品名: String title = content.getTitle();
+价格:   String price = content.getPrice();
+主图url:String mainPic = content.getMainPic();
+描述html:String itemDesc = conten.getItemDesc();
+副图url: Arraylist<String> auctionList = conten.getAuctionPics();
+描述中的图url: Arraylist<String> descList = content.getDescPics();
+商品详情:HashMap<String, String> attributeList =content.getAttributeList();

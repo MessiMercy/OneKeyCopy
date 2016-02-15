@@ -1,0 +1,49 @@
+pic\s+:.*?\n 原型正则
+商品名:  title\s+:.*?\n
+商品图:   pic\s+:.*?\n
+原价:  ("input[name=current_price]").attr("value")
+现价:   访问sibUrl\s+:.*?\n的值,再price\s?:.*?,
+详情:  descUrl\s+:.*?\n
+具体信息: ul.attributes-list.
+
+http://121.41.23.227/
+
+
+市场价,产品名称,主图,描述,副图
+
+
+
+天猫:
+json在TShop.Setup(  "valTimeLeft":90075}
+市场价,产品名称,描述在json中
+主图:(img[id=J_ImgBooth]).attr(scr)
+附图:在其下面
+详情属性:<li title="QS4400 0502 0012 ">生产许可证编号：QS4400 0502 0012 </li>
+
+
+
+
+122270672.1764852877.1453891682.1453891682.1453891682.1
+
+1764852877
+
+
+京东:
+市场价,,
+产品名:json内
+图:
+doc.select("ul.lh").select("img[data-img=1]")
+描述:json内
+d.3.cn/desc/1290472858?cdn=1
+价格:http://p.3.cn/prices/get?type=1&area=1_72_2799&pdtk=&pduid=410744404&pdpin=&pdbp=0&skuid=J_1415075052&callback=cnp"
+
+
+
+阿里巴巴:
+市场价,产品名称,主图,描述,副图,属性
+主图:meta[property=og:image] .attr"content"
+副图: doc.select("a.box-img[hidefocus=true]").select("img[alt]")
+产品名:meta[property=og:title] .attr"content"
+描述:div[id=desc-lazyload-container] .attr"data-tfs-url"
+价格:meta[property=og:product:orgprice] .attr"content"
+属性:键td.de-feature 值td.de-value
