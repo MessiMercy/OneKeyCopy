@@ -1,12 +1,7 @@
 package com.fetchContent;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,6 +38,7 @@ public class JdContent extends GetContent {
 	@Override
 	protected void setExtraValues(String html) {
 		Document doc = Jsoup.parse(html);
+		findPropertyType(doc);
 		Elements pics = doc.select("ul.lh").select("img[data-img=1]");
 		if (pics.size() != 0) {
 			setMainPic(changeToBigPic(pics.get(0).attr("src")));
@@ -111,37 +107,27 @@ public class JdContent extends GetContent {
 		}
 	}
 
-	protected void tempDemo() throws IOException {
-		Map<String, ArrayList<String>> stock = new HashMap<>();
-		Document doc = Jsoup.connect("http://item.jd.com/1856581.html").get();
+	protected void findPropertyType(Document doc) {
 		Elements elements = doc.select("div.item>a[title]").select("a[clstag]");
+		if (elements.size() == 0) {
+			return;
+		}
 		for (Element element : elements) {
 			String title = element.attr("title");
 			String clstag = handleClstag(element.attr("clstag"));
 			// System.out.println(element.toString());
 			if (element.children().size() != 0 && element.child(0).hasAttr("data-img")) {
-				title += ("#http:" + element.child(0).attr("src"));
+				title += changeToBigPic("#http:" + element.child(0).attr("src"));
 			}
-			if (stock.containsKey(clstag)) {
-				ArrayList<String> list = stock.get(clstag);
+			if (propertyType.containsKey(clstag)) {
+				ArrayList<String> list = propertyType.get(clstag);
 				list.add(title);
-				stock.put(clstag, list);
+				propertyType.put(clstag, list);
 			} else {
 				ArrayList<String> list = new ArrayList<>();
 				list.add(title);
-				stock.put(clstag, list);
+				propertyType.put(clstag, list);
 			}
-		}
-		Iterator<Entry<String, ArrayList<String>>> it = stock.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry<String, ArrayList<String>> entry = it.next();
-			ArrayList<String> list = entry.getValue();
-			String ssString = "";
-			for (String string : list) {
-				ssString += (string + " ");
-			}
-			System.out.println(entry.getKey() + "--------" + ssString);
-
 		}
 
 	}
