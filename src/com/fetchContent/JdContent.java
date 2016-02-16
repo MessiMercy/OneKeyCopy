@@ -2,6 +2,11 @@ package com.fetchContent;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,8 +53,8 @@ public class JdContent extends GetContent {
 		Elements attributes = doc.select("li[title]");
 		for (Element element : attributes) {
 			String value = element.text();
-			if (value.contains("£º") || value.contains(":")) {
-				value = value.replaceAll("£º", ":");
+			if (value.contains("ï¼š") || value.contains(":")) {
+				value = value.replaceAll("ï¼š", ":");
 				String[] properties = value.split(":");
 				attributeList.put(properties[0], properties[1]);
 			}
@@ -107,19 +112,51 @@ public class JdContent extends GetContent {
 	}
 
 	protected void tempDemo() throws IOException {
-		Document doc = Jsoup.connect("http://item.jd.com/1856584.html").get();
+		Map<String, ArrayList<String>> stock = new HashMap<>();
+		Document doc = Jsoup.connect("http://item.jd.com/1856581.html").get();
 		Elements elements = doc.select("div.item>a[title]").select("a[clstag]");
 		for (Element element : elements) {
-			System.out.println(element.toString());
-		}
-		Elements eee = doc.select("div[id=choose]").select("div.dt");
-		for (Element element : eee) {
-			if (element.text().contains("ºÏÔ¼Ì×²Í") || element.text().contains("ÎÂÜ°ÌáÊ¾")) {
-				continue;
+			String title = element.attr("title");
+			String clstag = handleClstag(element.attr("clstag"));
+			// System.out.println(element.toString());
+			if (element.children().size() != 0 && element.child(0).hasAttr("data-img")) {
+				title += ("#http:" + element.child(0).attr("src"));
 			}
-			System.out.println(element.text());
+			if (stock.containsKey(clstag)) {
+				ArrayList<String> list = stock.get(clstag);
+				list.add(title);
+				stock.put(clstag, list);
+			} else {
+				ArrayList<String> list = new ArrayList<>();
+				list.add(title);
+				stock.put(clstag, list);
+			}
+		}
+		Iterator<Entry<String, ArrayList<String>>> it = stock.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry<String, ArrayList<String>> entry = it.next();
+			ArrayList<String> list = entry.getValue();
+			String ssString = "";
+			for (String string : list) {
+				ssString += (string + " ");
+			}
+			System.out.println(entry.getKey() + "--------" + ssString);
+
 		}
 
+	}
+
+	private String handleClstag(String temp) {
+		int left = temp.lastIndexOf("|") + 1;
+		int right = temp.indexOf("-");
+		String str = temp.substring(left, right);
+		if (str.equals("yanse")) {
+			str = "é¢œè‰²";
+		}
+		if (str.equals("banben")) {
+			str = "ç‰ˆæœ¬";
+		}
+		return str;
 	}
 
 }
